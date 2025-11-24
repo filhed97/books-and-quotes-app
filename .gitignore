@@ -6,8 +6,8 @@
 
 # Node
 /app/node_modules
-npm-debug.log
-yarn-error.log
+/app/npm-debug.log
+/app/yarn-error.log
 
 # IDEs and editors
 .idea/
@@ -28,7 +28,7 @@ yarn-error.log
 /app/.vscode/*
 
 # Miscellaneous
-/.angular/cache
+/app/.angular/cache
 .sass-cache/
 /connect.lock
 /coverage
