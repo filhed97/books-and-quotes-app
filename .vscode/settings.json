@@ -3,5 +3,14 @@
     "azureFunctions.projectLanguage": "C#",
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",
-    "azureFunctions.preDeployTask": "publish (functions)"
+    "azureFunctions.preDeployTask": "publish (functions)",
+
+    // Ignore schema validation for staticwebapp.config.json
+    "json.schemaDownload.enable": false,
+    "json.schemas": [
+    {
+      "fileMatch": ["staticwebapp.config.json"],
+      "url": ""
+    }
+  ]
 }
