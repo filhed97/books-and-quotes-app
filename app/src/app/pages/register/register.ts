@@ -10,15 +10,14 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './register.css',
 })
 export class Register {
-  email = '';
+  username = '';
   password = '';
 
   constructor(private auth: Auth) {}
 
   submit() {
-    this.auth.register({ email: this.email, password: this.password }).subscribe({
-      next: (res) => console.log('Registered:', res),
-      error: (err) => console.error(err),
+    this.auth.register(this.username, this.password).subscribe(res => {
+      console.log('Register response:', res);
     });
   }
 }
