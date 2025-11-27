@@ -10,15 +10,14 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './login.css',
 })
 export class Login {
-  email = '';
+  username = '';
   password = '';
 
   constructor(private auth: Auth) {}
 
   submit() {
-    this.auth.login({ email: this.email, password: this.password }).subscribe({
-      next: (res) => console.log('Logged in:', res),
-      error: (err) => console.error(err),
+    this.auth.login(this.username, this.password).subscribe(res => {
+      console.log('Login response:', res);
     });
   }
 }
