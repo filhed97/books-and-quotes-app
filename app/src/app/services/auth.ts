@@ -1,0 +1,20 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class Auth {
+  private api = '/api'; // temporary
+
+  constructor(private http: HttpClient) {}
+
+  register(data: { email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.api}/register`, data);
+  }
+
+  login(data: { email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.api}/login`, data);
+  }
+}
