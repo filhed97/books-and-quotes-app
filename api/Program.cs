@@ -2,10 +2,17 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using api.Storage;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
+
+var connectionString = builder.Configuration["TableStorageConnection"];
+
+builder.Services.AddSingleton<IUserRepository>(
+    new TableUserRepository(connectionString)
+);
 
 builder.Services
     .AddApplicationInsightsTelemetryWorkerService()
