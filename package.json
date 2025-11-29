@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "azurite": "azurite-table --location .azurite --debug .azurite/debug.log"
+  }
+}
