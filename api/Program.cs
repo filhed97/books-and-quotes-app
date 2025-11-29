@@ -10,9 +10,12 @@ builder.ConfigureFunctionsWebApplication();
 
 var connectionString = builder.Configuration["TableStorageConnection"];
 
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException("TableStorageConnection is missing.");
+
 builder.Services.AddSingleton<IUserRepository>(
     new TableUserRepository(connectionString)
-);
+); 
 
 builder.Services
     .AddApplicationInsightsTelemetryWorkerService()
