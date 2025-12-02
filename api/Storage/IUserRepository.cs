@@ -1,3 +1,5 @@
+namespace api.Storage;
+
 public interface IUserRepository
 {
     Task CreateUserAsync(string username, string passwordHash);
