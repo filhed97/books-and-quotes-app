@@ -12,6 +12,6 @@ export class Test {
   constructor(private http: HttpClient) { }
 
   getMessage(): Observable<string> {
-    return this.http.get(this.apiUrl, { responseType: 'text' });
+    return this.http.get(this.apiUrl, { responseType: 'text', withCredentials: true });
   }
 }

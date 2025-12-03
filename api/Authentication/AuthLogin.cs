@@ -1,18 +1,22 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Net;
 using api.Storage;
+using api.Authentication;
 
-namespace api;
+namespace api.Authentication;
 
 public class AuthLogin
 {
     private readonly IUserRepository _users;
+    private readonly IConfiguration _config;
 
-    public AuthLogin(IUserRepository users)
+    public AuthLogin(IUserRepository users, IConfiguration config)
     {
         _users = users;
+        _config = config;
     }
 
     [Function("AuthLogin")]
@@ -49,11 +53,21 @@ public class AuthLogin
             return unauthorized;
         }
 
+        var jwtKey = _config["JWT_KEY"] ?? throw new InvalidOperationException("JWT_KEY missing");
+        var jwtIssuer = _config["JWT_ISSUER"] ?? "your-app";
+
+        var token = AuthHelpers.CreateJwt(body.Username, jwtIssuer, jwtKey, TimeSpan.FromHours(8));
+
         var res = req.CreateResponse(HttpStatusCode.OK);
+
+        // Build cookie string
+        var cookie = $"auth={token}; HttpOnly; Path=/; SameSite=Strict; Max-Age={8*3600}; Secure";
+
+        res.Headers.Add("Set-Cookie", cookie);
+
         await res.WriteAsJsonAsync(new { success = true });
         return res;
     }
 
     public record LoginRequest(string Username, string Password);
 }
-
