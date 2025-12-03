@@ -6,7 +6,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using System.Net;
 
-namespace api.Functions.Books;
+namespace api.Functions;
 
 public class BooksUpdate
 {
