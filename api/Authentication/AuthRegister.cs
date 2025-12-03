@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Net;
 using api.Storage;
 
-namespace api;
+namespace api.Authentication;
 
 public class AuthRegister
 {
