@@ -1,18 +1,22 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Net;
 using api.Storage;
+using api.Authentication;
 
 namespace api.Authentication;
 
 public class AuthLogin
 {
     private readonly IUserRepository _users;
+    private readonly IConfiguration _config;
 
-    public AuthLogin(IUserRepository users)
+    public AuthLogin(IUserRepository users, IConfiguration config)
     {
         _users = users;
+        _config = config;
     }
 
     [Function("AuthLogin")]
@@ -49,7 +53,20 @@ public class AuthLogin
             return unauthorized;
         }
 
+        var jwtKey = _config["JWT_KEY"] ?? throw new InvalidOperationException("JWT_KEY missing");
+        var jwtIssuer = _config["JWT_ISSUER"] ?? "your-app";
+
+        var token = AuthHelpers.CreateJwt(body.Username, jwtIssuer, jwtKey, TimeSpan.FromHours(8));
+
         var res = req.CreateResponse(HttpStatusCode.OK);
+
+        // Set HttpOnly cookie.  
+        // NOTES: 
+        // 1) For local dev (http), omitting 'Secure' or using swa proxy may be needed.
+        // 2) In production (SWA) ensure 'Secure' and SameSite settings are appropriate.
+        var cookie = $"auth={token}; HttpOnly; Path=/; SameSite=Strict; Secure; Max-Age={8*3600}";
+        res.Headers.Add("Set-Cookie", cookie);
+
         await res.WriteAsJsonAsync(new { success = true });
         return res;
     }

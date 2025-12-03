@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Azure.Cosmos;
 using api.Storage;
+using Microsoft.Extensions.Configuration;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -45,7 +46,9 @@ builder.Services.AddSingleton<IUserRepository>(sp =>
     return new CosmosUserRepository(container);
 });
 
-// JWT configuration values
+// JWT configuration
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
 var jwtKey = builder.Configuration["JWT_KEY"];
 var jwtIssuer = builder.Configuration["JWT_ISSUER"] ?? "your-app";
 
