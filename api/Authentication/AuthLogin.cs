@@ -60,11 +60,9 @@ public class AuthLogin
 
         var res = req.CreateResponse(HttpStatusCode.OK);
 
-        // Set HttpOnly cookie.  
-        // NOTES: 
-        // 1) For local dev (http), omitting 'Secure' or using swa proxy may be needed.
-        // 2) In production (SWA) ensure 'Secure' and SameSite settings are appropriate.
-        var cookie = $"auth={token}; HttpOnly; Path=/; SameSite=Strict; Secure; Max-Age={8*3600}";
+        // Build cookie string
+        var cookie = $"auth={token}; HttpOnly; Path=/; SameSite=Strict; Max-Age={8*3600}; Secure";
+
         res.Headers.Add("Set-Cookie", cookie);
 
         await res.WriteAsJsonAsync(new { success = true });
@@ -73,4 +71,3 @@ public class AuthLogin
 
     public record LoginRequest(string Username, string Password);
 }
-

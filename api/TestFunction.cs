@@ -17,9 +17,10 @@ public class TestFunction
     }
 
     [Function("TestFunction")]
-    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
+    public async Task<HttpResponseData> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
     {
-        // Read Cookie header
+        // Step 1: Read 'Cookie' header
         if (!req.Headers.TryGetValues("Cookie", out var cookieHeaders))
         {
             var unauth = req.CreateResponse(HttpStatusCode.Unauthorized);
@@ -29,6 +30,7 @@ public class TestFunction
 
         var cookieHeader = string.Join("; ", cookieHeaders);
 
+        // Step 2: Extract 'auth' token
         var token = ParseCookie(cookieHeader, "auth");
         if (string.IsNullOrEmpty(token))
         {
@@ -37,17 +39,19 @@ public class TestFunction
             return unauth;
         }
 
+        // Step 3: Validate JWT
         var jwtKey = _config["JWT_KEY"] ?? throw new InvalidOperationException("JWT_KEY missing");
         var jwtIssuer = _config["JWT_ISSUER"] ?? "your-app";
 
-        var principal = AuthHelpers.ValidateJwt(token, jwtIssuer, jwtKey, out var err);
+        var principal = AuthHelpers.ValidateJwt(token, jwtIssuer, jwtKey, out var validationError);
         if (principal == null)
         {
             var unauth = req.CreateResponse(HttpStatusCode.Unauthorized);
-            await unauth.WriteStringAsync("Invalid token: " + err);
+            await unauth.WriteStringAsync("Invalid token: " + validationError);
             return unauth;
         }
 
+        // Step 4: Auth success
         var res = req.CreateResponse(HttpStatusCode.OK);
         await res.WriteStringAsync("JWT AUTH SUCCESS");
         return res;
@@ -57,9 +61,9 @@ public class TestFunction
     {
         // cookieHeader format: "a=1; auth=thetoken; b=2"
         var parts = cookieHeader.Split(';', StringSplitOptions.RemoveEmptyEntries);
-        foreach (var p in parts)
+        foreach (var part in parts)
         {
-            var kv = p.Split('=', 2);
+            var kv = part.Split('=', 2);
             if (kv.Length == 2)
             {
                 var key = kv[0].Trim();
@@ -71,4 +75,3 @@ public class TestFunction
         return null;
     }
 }
-
