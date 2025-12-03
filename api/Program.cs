@@ -7,10 +7,9 @@ using api.Storage;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
-// Configure Application Insights
 builder.Services.AddApplicationInsightsTelemetryWorkerService();
 
-// Cosmos DB configuration
+// Cosmos DB Configuration
 var cosmosEndpoint = builder.Configuration["COSMOS_DB_ENDPOINT"];
 var cosmosKey = builder.Configuration["COSMOS_DB_KEY"];
 var cosmosDatabase = builder.Configuration["COSMOS_DB_DATABASE"];
@@ -24,32 +23,37 @@ if (string.IsNullOrWhiteSpace(cosmosEndpoint) ||
     throw new InvalidOperationException("Cosmos DB configuration is missing.");
 }
 
-// Register IUserRepository with Cosmos DB implementation
+// Register the Cosmos-backed repository
 builder.Services.AddSingleton<IUserRepository>(sp =>
 {
-    // Configure client to use Gateway mode (emulator-friendly)
     var clientOptions = new CosmosClientOptions
     {
         ConnectionMode = ConnectionMode.Gateway
     };
+
     var client = new CosmosClient(cosmosEndpoint, cosmosKey, clientOptions);
 
-    // Ensure database exists
-    var databaseResponse = client.CreateDatabaseIfNotExistsAsync(cosmosDatabase).GetAwaiter().GetResult();
-    var database = databaseResponse.Database;
+    var dbResponse = client.CreateDatabaseIfNotExistsAsync(cosmosDatabase).GetAwaiter().GetResult();
+    var database = dbResponse.Database;
 
-    // Ensure container exists with partition key "/id"
-    var containerProperties = new ContainerProperties(cosmosContainer, "/id");
-    var containerResponse = database.CreateContainerIfNotExistsAsync(containerProperties).GetAwaiter().GetResult();
+    var containerProps = new ContainerProperties(cosmosContainer, "/id");
+    var containerResponse = database.CreateContainerIfNotExistsAsync(containerProps).GetAwaiter().GetResult();
     var container = containerResponse.Container;
 
-    Console.WriteLine($"DEBUG: Cosmos DB container '{cosmosContainer}' ready with partition key {containerProperties.PartitionKeyPath}");
+    Console.WriteLine($"DEBUG: Cosmos DB container '{cosmosContainer}' ready.");
 
     return new CosmosUserRepository(container);
 });
 
-// Configure Functions Web Application
+// JWT configuration values
+var jwtKey = builder.Configuration["JWT_KEY"];
+var jwtIssuer = builder.Configuration["JWT_ISSUER"] ?? "your-app";
+
+if (string.IsNullOrWhiteSpace(jwtKey))
+{
+    Console.WriteLine("WARNING: JWT_KEY is missing from config.");
+}
+
 builder.ConfigureFunctionsWebApplication();
 
-// Build and run
 builder.Build().Run();
