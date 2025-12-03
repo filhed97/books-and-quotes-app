@@ -1,6 +1,6 @@
-namespace api.Storage;
-
 using Microsoft.Azure.Cosmos;
+
+namespace api.Storage;
 public class CosmosUserRepository : IUserRepository
 {
     private readonly Container _container;
