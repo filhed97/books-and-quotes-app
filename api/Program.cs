@@ -46,6 +46,19 @@ builder.Services.AddSingleton<IUserRepository>(sp =>
     return new CosmosUserRepository(container);
 });
 
+// BOOKS container
+builder.Services.AddSingleton<IBookRepository>(sp =>
+{
+    var client = sp.GetRequiredService<CosmosClient>();
+    var db = client.GetDatabase(cosmosDatabase);
+
+    var container = db.CreateContainerIfNotExistsAsync(
+        new ContainerProperties("Books", "/OwnerUsername")
+    ).GetAwaiter().GetResult().Container;
+
+    return new CosmosBookRepository(container);
+});
+
 // JWT configuration
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
