@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Net;
 using api.Storage;
-using api.Authentication;
 
 namespace api.Authentication;
 
@@ -56,7 +55,7 @@ public class AuthLogin
         var jwtKey = _config["JWT_KEY"] ?? throw new InvalidOperationException("JWT_KEY missing");
         var jwtIssuer = _config["JWT_ISSUER"] ?? "your-app";
 
-        var token = AuthHelpers.CreateJwt(body.Username, jwtIssuer, jwtKey, TimeSpan.FromHours(8));
+        var token = JwtAuthHelpers.CreateJwt(body.Username, jwtIssuer, jwtKey, TimeSpan.FromHours(8));
 
         var res = req.CreateResponse(HttpStatusCode.OK);
 

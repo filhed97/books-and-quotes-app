@@ -33,7 +33,7 @@ public static class JwtReader
         var jwtKey = config["JWT_KEY"] ?? throw new InvalidOperationException("JWT_KEY missing");
         var jwtIssuer = config["JWT_ISSUER"] ?? "your-app";
 
-        var principal = AuthHelpers.ValidateJwt(token, jwtIssuer, jwtKey, out var validationError);
+        var principal = JwtAuthHelpers.ValidateJwt(token, jwtIssuer, jwtKey, out var validationError);
         if (principal == null)
         {
             error = "Invalid token: " + validationError;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace api.Authentication;
 
-public static class AuthHelpers
+public static class JwtAuthHelpers
 {
     public static string CreateJwt(string username, string issuer, string key, TimeSpan? expires = null)
     {
