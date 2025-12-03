@@ -2,9 +2,9 @@ using Microsoft.Azure.Functions.Worker.ApplicationInsights;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Azure.Cosmos;
 using api.Storage;
-using Microsoft.Extensions.Configuration;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -50,7 +50,7 @@ builder.Services.AddSingleton<IUserRepository>(sp =>
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 var jwtKey = builder.Configuration["JWT_KEY"];
-var jwtIssuer = builder.Configuration["JWT_ISSUER"] ?? "your-app";
+var jwtIssuer = builder.Configuration["JWT_ISSUER"] ?? "books-and-quotes-api";
 
 if (string.IsNullOrWhiteSpace(jwtKey))
 {
