@@ -1,24 +1,23 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BooksService, Book } from '../../services/books';
-import { FormsModule } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   standalone: true,
   selector: 'app-books',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './books.html',
   styleUrls: ['./books.css']
 })
 export class BooksPage implements OnInit {
 
   private booksService = inject(BooksService);
+  private router = inject(Router);
 
   books: Book[] = [];
   loading = true;
   error = '';
-  newTitle = '';
-  newAuthor = '';
 
   ngOnInit() {
     this.loadBooks();
@@ -39,32 +38,20 @@ export class BooksPage implements OnInit {
     });
   }
 
-  addBook() {
-    if (!this.newTitle.trim()) return;
+  deleteBook(id: string) {
+    if (!confirm('Are you sure you want to delete this book?')) return;
 
-    this.booksService.addBook({
-      title: this.newTitle,
-      author: this.newAuthor
-    }).subscribe({
-      next: (created) => {
-        this.books.push(created);
-        this.newTitle = '';
-        this.newAuthor = '';
-      },
-      error: () => {
-        this.error = 'Failed to add book.';
-      }
+    this.booksService.deleteBook(id).subscribe({
+      next: () => this.loadBooks(),
+      error: () => this.error = 'Failed to delete book.'
     });
   }
 
-  deleteBook(id: string) {
-    this.booksService.deleteBook(id).subscribe({
-      next: () => {
-        this.books = this.books.filter(b => b.id !== id);
-      },
-      error: () => {
-        this.error = 'Failed to delete book.';
-      }
-    });
+  goToAdd() {
+    this.router.navigate(['/books/add']);
+  }
+
+  goToEdit(book: Book) {
+    this.router.navigate(['/books/edit', book.id]);
   }
 }
