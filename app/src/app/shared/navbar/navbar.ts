@@ -1,20 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 
 @Component({
+  standalone: true,
   selector: 'app-navbar',
+  imports: [CommonModule, RouterModule],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.css']
 })
 export class Navbar implements OnInit {
 
-  isLoggedIn = false;
+  private auth = inject(Auth);
+  private router = inject(Router);
 
-  constructor(
-    private auth: Auth,
-    private router: Router
-  ) {}
+  isLoggedIn = false;
 
   async ngOnInit() {
     this.isLoggedIn = await this.auth.check();
@@ -22,7 +23,7 @@ export class Navbar implements OnInit {
 
   async logout() {
     /* try {
-      await this.auth.logout(); // Make sure you have a logout endpoint in Auth service
+      await this.auth.logout();
     } catch (err) {
       console.error('Logout failed', err);
     } */
