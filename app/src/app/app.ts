@@ -1,23 +1,15 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Test } from './services/test';
+import { Navbar } from './shared/navbar/navbar';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [CommonModule, Navbar, RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css']
 })
 export class App {
   protected readonly title = signal('app');
-
-  message = signal<string>('Loading...');
-
-  constructor(private api: Test) {
-    this.api.getMessage().subscribe({
-      next: (text) => this.message.set(text),
-      error: () => this.message.set('Error calling API')
-    });
-  }
 }
