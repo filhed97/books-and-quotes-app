@@ -43,7 +43,7 @@ public class TestFunction
         var jwtKey = _config["JWT_KEY"] ?? throw new InvalidOperationException("JWT_KEY missing");
         var jwtIssuer = _config["JWT_ISSUER"] ?? "your-app";
 
-        var principal = AuthHelpers.ValidateJwt(token, jwtIssuer, jwtKey, out var validationError);
+        var principal = JwtAuthHelpers.ValidateJwt(token, jwtIssuer, jwtKey, out var validationError);
         if (principal == null)
         {
             var unauth = req.CreateResponse(HttpStatusCode.Unauthorized);
