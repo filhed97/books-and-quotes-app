@@ -21,7 +21,7 @@ public class BooksAdd
 
     [Function("BooksAdd")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "books")] HttpRequestData req)
     {
         var user = JwtReader.GetUser(req, _config, out var error);
         if (user == null)
@@ -40,7 +40,7 @@ public class BooksAdd
         }
 
         // override owner + id
-        book.OwnerUsername = user;
+        book.userId = user;
         book.id ??= Guid.NewGuid().ToString();
 
         await _repo.AddAsync(book);

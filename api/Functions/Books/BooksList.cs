@@ -20,7 +20,7 @@ public class BooksList
 
     [Function("BooksList")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "books")] HttpRequestData req)
     {
         var user = JwtReader.GetUser(req, _config, out var error);
         if (user == null)

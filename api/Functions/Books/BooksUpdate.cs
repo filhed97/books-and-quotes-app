@@ -49,9 +49,9 @@ public class BooksUpdate
         }
 
         // Apply updates (simplest form)
-        existing.Title = body.Title;
-        existing.Author = body.Author;
-        existing.Published = body.Published;
+        existing.title = body.title;
+        existing.author = body.author;
+        existing.published = body.published;
 
         await _repo.UpdateAsync(existing);
 

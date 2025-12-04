@@ -2,9 +2,10 @@ namespace api.Models;
 
 public class Book
 {
+    // Using camelCase to avoid serialization headaches. 
     public string id { get; set; } = Guid.NewGuid().ToString();
-    public string Title { get; set; } = "";
-    public string Author { get; set; } = "";
-    public DateTime Published { get; set; }
-    public string OwnerUsername { get; set; } = "";  // important for auth
+    public string title { get; set; } = "";
+    public string author { get; set; } = "";
+    public DateTime published { get; set; }
+    public string userId { get; set; } = "";
 }

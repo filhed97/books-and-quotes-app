@@ -1,6 +1,6 @@
-namespace api.Storage;
-
 using Newtonsoft.Json;
+
+namespace api.Storage;
 
 public class User
 {

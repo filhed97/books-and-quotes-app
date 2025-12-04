@@ -29,7 +29,7 @@ public class CosmosBookRepository : IBookRepository
     public async Task<List<Book>> ListAsync(string owner)
     {
         var q = _container.GetItemLinqQueryable<Book>(true)
-                          .Where(b => b.OwnerUsername == owner)
+                          .Where(b => b.userId == owner)
                           .ToFeedIterator();
 
         var results = new List<Book>();
@@ -43,10 +43,10 @@ public class CosmosBookRepository : IBookRepository
     }
 
     public Task AddAsync(Book book) =>
-        _container.CreateItemAsync(book, new PartitionKey(book.OwnerUsername));
+        _container.CreateItemAsync(book, new PartitionKey(book.userId));
 
     public Task UpdateAsync(Book book) =>
-        _container.UpsertItemAsync(book, new PartitionKey(book.OwnerUsername));
+        _container.UpsertItemAsync(book, new PartitionKey(book.userId));
 
     public Task DeleteAsync(string id, string owner) =>
         _container.DeleteItemAsync<Book>(id, new PartitionKey(owner));

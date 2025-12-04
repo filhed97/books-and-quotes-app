@@ -15,18 +15,17 @@ public class CosmosUserRepository : IUserRepository
         // Construct a proper object with Id set for partition key
         var user = new User
         {
-            Id = username,           // REQUIRED for /id partition key
+            Id = username, 
             Username = username,
             PasswordHash = passwordHash
         };
 
-        Console.WriteLine($"DEBUG: user.Id = '{user.Id}'");
-        Console.WriteLine($"DEBUG: PartitionKey = '{new PartitionKey(user.Id).ToString()}'");
+        Console.WriteLine($"DEBUG: PartitionKey = '{new PartitionKey(user.Username).ToString()}'");
 
         var json = System.Text.Json.JsonSerializer.Serialize(user);
         Console.WriteLine($"DEBUG JSON: {json}");
 
-        await _container.CreateItemAsync(user, new PartitionKey(user.Id));
+        await _container.CreateItemAsync(user, new PartitionKey(user.Username));
     }
 
     public async Task<(string Username, string PasswordHash)?> GetUserAsync(string username)
