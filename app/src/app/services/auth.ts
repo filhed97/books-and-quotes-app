@@ -19,6 +19,14 @@ export class Auth {
     return this.http.post(`${this.baseUrl}/AuthLogin`, { username, password });
   }
 
+  logout(): Observable<void> {
+  return this.http.post<void>(
+    `${this.baseUrl}/AuthLogout`,
+    {},
+    { withCredentials: true }
+  );
+}
+
   // Quick check to see if auth credentials are currently valid
   async check(): Promise<boolean> {
     try {

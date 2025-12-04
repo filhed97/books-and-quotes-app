@@ -22,11 +22,11 @@ export class Navbar implements OnInit {
   }
 
   async logout() {
-    /* try {
+    try {
       await this.auth.logout();
     } catch (err) {
       console.error('Logout failed', err);
-    } */
+    }
     this.isLoggedIn = false;
     this.router.navigate(['/login']);
   }
