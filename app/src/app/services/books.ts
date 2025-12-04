@@ -20,7 +20,7 @@ export interface BookCreateRequest {
 export class BooksService {
   private http = inject(HttpClient);
 
-  private apiUrl = `${environment.apiBaseUrl}/api/books`;
+  private apiUrl = `${environment.apiBaseUrl}/books`;
 
   getBooks(): Observable<Book[]> {
     return this.http.get<Book[]>(this.apiUrl, {
