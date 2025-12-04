@@ -13,31 +13,39 @@ export interface Book {
 export interface BookCreateRequest {
   title: string;
   author?: string;
+  published?: Date;
+}
+
+export interface BookUpdateRequest {
+  title?: string;
+  author?: string;
+  published?: Date;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BooksService {
   private http = inject(HttpClient);
-
   private apiUrl = `${environment.apiBaseUrl}/books`;
 
   getBooks(): Observable<Book[]> {
-    return this.http.get<Book[]>(this.apiUrl, {
-      withCredentials: true
-    });
+    return this.http.get<Book[]>(this.apiUrl, { withCredentials: true });
+  }
+
+  getBook(id: string): Observable<Book> {
+    return this.http.get<Book>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   addBook(book: BookCreateRequest): Observable<Book> {
-    return this.http.post<Book>(this.apiUrl, book, {
-      withCredentials: true
-    });
+    return this.http.post<Book>(this.apiUrl, book, { withCredentials: true });
+  }
+
+  updateBook(id: string, book: BookUpdateRequest): Observable<Book> {
+    return this.http.put<Book>(`${this.apiUrl}/${id}`, book, { withCredentials: true });
   }
 
   deleteBook(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
-      withCredentials: true
-    });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 }
