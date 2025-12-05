@@ -17,7 +17,7 @@ public class AuthRegister
 
     [Function("AuthRegister")]
     public async Task<HttpResponseData> Run(
-    [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
+    [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "auth/register")] HttpRequestData req)
     {
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
