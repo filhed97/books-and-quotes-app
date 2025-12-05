@@ -15,6 +15,21 @@
   --app-error-text: #922c2c;
 }
 
+/* DARK THEME (controlled by <html class="dark">) */
+html.dark {
+  --app-bg: #0f172a;
+  --app-text: #e2e8f0;
+  --app-muted: #94a3b8;
+
+  --app-primary: #6cc3d5;
+  --app-success: #7dc89a;
+  --app-danger: #d49890;
+  --app-warning: #fbbf24;
+
+  --app-error-bg: #3f1c1c;
+  --app-error-text: #fca5a5;
+}
+
 /* BOOTSTRAP COLOR OVERRIDES */
 
 /* Primary buttons */
