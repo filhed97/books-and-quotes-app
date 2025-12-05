@@ -8,16 +8,16 @@ import { RouterModule, Router } from '@angular/router';
   selector: 'app-quotes',
   imports: [CommonModule, RouterModule],
   templateUrl: './quotes.html',
-  styleUrls: ['./quotes.css']
+  styleUrls: ['./quotes.css'],
 })
 export class QuotesPage implements OnInit {
-
   private quotesService = inject(QuotesService);
   private router = inject(Router);
 
   quotes: Quote[] = [];
   loading = true;
   error = '';
+  maxQuotes = 5;
 
   ngOnInit() {
     this.loadQuotes();
@@ -34,7 +34,7 @@ export class QuotesPage implements OnInit {
       error: () => {
         this.error = 'Failed to load quotes.';
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -43,7 +43,7 @@ export class QuotesPage implements OnInit {
 
     this.quotesService.deleteQuote(id).subscribe({
       next: () => this.loadQuotes(),
-      error: () => this.error = 'Failed to delete quote.'
+      error: () => (this.error = 'Failed to delete quote.'),
     });
   }
 
@@ -53,5 +53,9 @@ export class QuotesPage implements OnInit {
 
   goToEdit(quote: Quote) {
     this.router.navigate(['/quotes/edit', quote.id]);
+  }
+
+  canAddQuote(): boolean {
+    return this.quotes.length < this.maxQuotes;
   }
 }
