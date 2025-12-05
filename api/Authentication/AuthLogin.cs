@@ -37,9 +37,9 @@ public class AuthLogin
 
         if (user is null)
         {
-            var unauthorized = req.CreateResponse(HttpStatusCode.Unauthorized);
-            await unauthorized.WriteStringAsync("User not found");
-            return unauthorized;
+            var bad = req.CreateResponse(HttpStatusCode.BadRequest);
+            await bad.WriteStringAsync("User not found");
+            return bad;
         }
 
         // For now: compare plain text
@@ -47,9 +47,9 @@ public class AuthLogin
 
         if (!passwordMatches)
         {
-            var unauthorized = req.CreateResponse(HttpStatusCode.Unauthorized);
-            await unauthorized.WriteStringAsync("Invalid password");
-            return unauthorized;
+            var bad = req.CreateResponse(HttpStatusCode.BadRequest);
+            await bad.WriteStringAsync("Invalid password");
+            return bad;
         }
 
         var jwtKey = _config["JWT_KEY"] ?? throw new InvalidOperationException("JWT_KEY missing");
