@@ -21,7 +21,10 @@ export class Navbar implements OnInit {
   isLoggedIn = false;
 
   async ngOnInit() {
-    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    // Subscribe to reactive login state
+    this.auth.loggedIn$.subscribe(state => {
+      this.isLoggedIn = state;
+    });
   }
 
   async logout() {
@@ -31,8 +34,7 @@ export class Navbar implements OnInit {
       console.error('Logout failed', err);
     }
 
-    localStorage.setItem('isLoggedIn', 'false');
-    this.isLoggedIn = false;
+    this.auth.setLoggedIn(false);
     this.router.navigate(['/login']);
   }
 

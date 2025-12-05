@@ -21,8 +21,8 @@ export class Login {
       next: (res) => {
         console.log('Login response:', res);
 
-        // Set localStorage flag
-        localStorage.setItem('isLoggedIn', 'true');
+        // Set login flag
+        this.auth.setLoggedIn(true);
 
         // Navigate to home page
         this.router.navigate(['/']);
