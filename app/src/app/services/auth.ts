@@ -12,12 +12,20 @@ export class Auth {
   constructor(private http: HttpClient) {}
 
   register(username: string, password: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/AuthRegister`, { username, password });
+    return this.http.post(`${this.baseUrl}/auth/register`, { username, password });
   }
 
   login(username: string, password: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/AuthLogin`, { username, password });
+    return this.http.post(`${this.baseUrl}/auth/login`, { username, password });
   }
+
+  logout(): Observable<void> {
+  return this.http.post<void>(
+    `${this.baseUrl}/auth/logout`,
+    {},
+    { withCredentials: true }
+  );
+}
 
   // Quick check to see if auth credentials are currently valid
   async check(): Promise<boolean> {

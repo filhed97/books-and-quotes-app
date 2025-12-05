@@ -20,7 +20,7 @@ public class AuthLogin
 
     [Function("AuthLogin")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "auth/login")] HttpRequestData req)
     {
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 

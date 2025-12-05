@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { Auth } from '../../services/auth';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -22,12 +23,14 @@ export class Navbar implements OnInit {
   }
 
   async logout() {
-    /* try {
-      await this.auth.logout();
-    } catch (err) {
-      console.error('Logout failed', err);
-    } */
-    this.isLoggedIn = false;
-    this.router.navigate(['/login']);
+  try {
+    await lastValueFrom(this.auth.logout());
+  } catch (err) {
+    console.error('Logout failed', err);
   }
+
+  this.isLoggedIn = false;
+  this.router.navigate(['/login']);
+}
+
 }
