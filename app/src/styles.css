@@ -1,1 +1,97 @@
-/* You can add global styles to this file, and also import other style files */
+/* GLOBAL UI THEME — App Palette + Bootstrap Overrides */
+:root {
+  /* App palette */
+  --app-primary: #457a7e;
+  --app-success: #508883;
+  --app-danger:  #a85d53;
+  --app-warning: #f59e0b;
+
+  --app-bg:      #ffffff;
+  --app-text:    #1e293b;
+  --app-muted:   #64748b;
+
+  /* Error UI (alerts, validation) */
+  --app-error-bg:   #fff1f2;
+  --app-error-text: #922c2c;
+}
+
+/* DARK THEME (controlled by <html class="dark">) */
+html.dark {
+  --app-bg: #0f172a;
+  --app-text: #e2e8f0;
+  --app-muted: #94a3b8;
+
+  --app-primary: #6cc3d5;
+  --app-success: #7dc89a;
+  --app-danger: #d49890;
+  --app-warning: #fbbf24;
+
+  --app-error-bg: #3f1c1c;
+  --app-error-text: #fca5a5;
+}
+
+/* BOOTSTRAP COLOR OVERRIDES */
+
+/* Primary buttons */
+.btn-primary,
+.btn-primary:disabled {
+  --bs-btn-bg: var(--app-primary);
+  --bs-btn-border-color: var(--app-primary);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--app-primary) 90%, black);
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--app-primary) 90%, black);
+}
+
+/* Success buttons */
+.btn-success {
+  --bs-btn-bg: var(--app-success);
+  --bs-btn-border-color: var(--app-success);
+}
+
+/* Danger buttons */
+.btn-danger {
+  --bs-btn-bg: var(--app-danger);
+  --bs-btn-border-color: var(--app-danger);
+}
+
+/* Alerts */
+.alert-danger {
+  --bs-alert-color: var(--app-error-text);
+  --bs-alert-bg: var(--app-error-bg);
+  --bs-alert-border-color: var(--app-danger);
+}
+
+/* Text classes override */
+.text-danger {
+  color: var(--app-danger) !important;
+}
+
+/* Body colors */
+body {
+  background: var(--app-bg) !important;
+  color: var(--app-text) !important;
+}
+
+/* Icons inherit color */
+.fa,
+.fa-solid,
+.fa-regular {
+  color: inherit !important;
+}
+
+/* UTILITIES */
+
+.text-app-muted {
+  color: var(--app-muted) !important;
+}
+
+.app-error {
+  color: var(--app-danger);
+  margin-bottom: 12px;
+}
+
+.app-error-box {
+  background: var(--app-error-bg);
+  color: var(--app-error-text);
+  padding: 0.75rem 1rem;
+  border-radius: 0.45rem;
+}

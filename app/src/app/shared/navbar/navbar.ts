@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { lastValueFrom } from 'rxjs';
+import { ThemeService } from '../../services/theme';
 
 @Component({
   standalone: true,
@@ -15,6 +16,7 @@ export class Navbar implements OnInit {
 
   private auth = inject(Auth);
   private router = inject(Router);
+  public themeService = inject(ThemeService); // Make public for template access
 
   isLoggedIn = false;
 
@@ -23,14 +25,17 @@ export class Navbar implements OnInit {
   }
 
   async logout() {
-  try {
-    await lastValueFrom(this.auth.logout());
-  } catch (err) {
-    console.error('Logout failed', err);
+    try {
+      await lastValueFrom(this.auth.logout());
+    } catch (err) {
+      console.error('Logout failed', err);
+    }
+
+    this.isLoggedIn = false;
+    this.router.navigate(['/login']);
   }
 
-  this.isLoggedIn = false;
-  this.router.navigate(['/login']);
-}
-
+  toggleTheme() {
+    this.themeService.toggleTheme();
+  }
 }

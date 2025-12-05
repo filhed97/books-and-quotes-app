@@ -13,11 +13,11 @@ button {
 }
 
 .error {
-  color: red;
+  color: var(--app-danger);
   margin-bottom: 12px;
 }
 
 .delete {
   margin-left: 12px;
-  color: red;
+  color: var(--app-danger);
 }

@@ -27,8 +27,8 @@
 }
 
 .form-control:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 0.15rem rgba(59, 130, 246, 0.25);
 }
 
 /* Buttons */
@@ -41,9 +41,9 @@
   margin-right: 0.25rem;
 }
 
-/* Make the primary button feel more "solid" */
+/* Make primary button feel more "solid" */
 .btn-primary {
-  box-shadow: 0 0.1rem 0.3rem rgba(13, 110, 253, 0.2);
+  box-shadow: 0 0.1rem 0.3rem rgba(59, 130, 246, 0.25);
   transition: transform 0.12s ease;
 }
 

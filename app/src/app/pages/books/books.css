@@ -12,12 +12,13 @@ button {
   padding: 6px 10px;
 }
 
+/* Use global theme variable */
 .error {
-  color: red;
+  color: var(--app-danger);
   margin-bottom: 12px;
 }
 
 .delete {
   margin-left: 12px;
-  color: red;
+  color: var(--app-danger);
 }

@@ -16,7 +16,7 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-    <!-- Left links -->
+    <!-- Left side -->
     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
       <li class="nav-item">
         <a class="nav-link" routerLink="" routerLinkActive="active">
@@ -30,8 +30,21 @@
       </li>
     </ul>
 
-    <!-- Right side auth buttons -->
+    <!-- Right side -->
     <ul class="navbar-nav ms-auto">
+
+      <!-- Theme toggle button -->
+      <li class="nav-item d-flex align-items-center me-2">
+        <button
+          class="btn btn-outline-light"
+          (click)="toggleTheme()"
+          title="Toggle light/dark mode">
+          <i *ngIf="themeService.theme === 'light'" class="fa-solid fa-moon"></i>
+          <i *ngIf="themeService.theme === 'dark'" class="fa-solid fa-sun"></i>
+        </button>
+      </li>
+
+      <!-- Auth buttons -->
       <li *ngIf="!isLoggedIn" class="nav-item">
         <a class="nav-link" routerLink="/login">
           <i class="fa-solid fa-right-to-bracket"></i> Login
@@ -49,6 +62,7 @@
           <i class="fa-solid fa-right-from-bracket"></i> Logout
         </button>
       </li>
+
     </ul>
 
   </div>
