@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Auth } from '../../services/auth';
 import { FormsModule } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,11 +14,22 @@ export class Login {
   username = '';
   password = '';
 
-  constructor(private auth: Auth) {}
+  constructor(private auth: Auth, private router: Router) {}
 
   submit() {
-    this.auth.login(this.username, this.password).subscribe(res => {
-      console.log('Login response:', res);
+    this.auth.login(this.username, this.password).subscribe({
+      next: (res) => {
+        console.log('Login response:', res);
+
+        // Set login flag
+        this.auth.setLoggedIn(true);
+
+        // Navigate to home page
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        console.error('Login failed', err);
+      }
     });
   }
 }

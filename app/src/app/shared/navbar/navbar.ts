@@ -21,7 +21,10 @@ export class Navbar implements OnInit {
   isLoggedIn = false;
 
   async ngOnInit() {
-    this.isLoggedIn = await this.auth.check();
+    // Subscribe to reactive login state
+    this.auth.loggedIn$.subscribe(state => {
+      this.isLoggedIn = state;
+    });
   }
 
   async logout() {
@@ -31,7 +34,7 @@ export class Navbar implements OnInit {
       console.error('Logout failed', err);
     }
 
-    this.isLoggedIn = false;
+    this.auth.setLoggedIn(false);
     this.router.navigate(['/login']);
   }
 
