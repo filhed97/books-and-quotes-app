@@ -1,0 +1,23 @@
+.add-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+input {
+  padding: 6px;
+}
+
+button {
+  padding: 6px 10px;
+}
+
+.error {
+  color: red;
+  margin-bottom: 12px;
+}
+
+.delete {
+  margin-left: 12px;
+  color: red;
+}

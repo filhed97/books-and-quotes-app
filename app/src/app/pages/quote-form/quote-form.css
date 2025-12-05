@@ -1,0 +1,77 @@
+/* Center the card nicely on all screen sizes */
+.container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* Smooth shadow and rounded card edges */
+.card {
+  border: none;
+  border-radius: 0.75rem;
+  transition: box-shadow 0.25s ease;
+}
+
+.card:hover {
+  box-shadow: 0 0.8rem 1.5rem rgba(0, 0, 0, 0.08);
+}
+
+/* Form labels */
+.form-label {
+  font-weight: 600;
+}
+
+/* Form inputs: subtle rounding + nicer focus ring */
+.form-control {
+  border-radius: 0.5rem;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+}
+
+/* Buttons */
+.btn {
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn i {
+  margin-right: 0.25rem;
+}
+
+/* Make the primary button feel more "solid" */
+.btn-primary {
+  box-shadow: 0 0.1rem 0.3rem rgba(13, 110, 253, 0.2);
+  transition: transform 0.12s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+}
+
+/* Cancel button subtle hover */
+.btn-outline-secondary:hover {
+  background-color: #f8f9fa;
+}
+
+/* Alerts: icon alignment */
+.alert i {
+  font-size: 1.1rem;
+}
+
+/* For small screens: tighter layout */
+@media (max-width: 576px) {
+  .card {
+    margin: 0 1rem;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .d-flex.gap-3 {
+    flex-direction: column;
+  }
+}

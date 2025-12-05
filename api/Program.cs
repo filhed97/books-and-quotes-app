@@ -42,7 +42,7 @@ builder.Services.AddSingleton(sp =>
     return client.GetDatabase(databaseName);
 });
 
-// Get references to the existing containers (no creation)
+// Get references to the existing containers
 builder.Services.AddSingleton<IUserRepository>(sp =>
 {
     var db = sp.GetRequiredService<Database>();
@@ -56,6 +56,15 @@ builder.Services.AddSingleton<IBookRepository>(sp =>
     var container = db.GetContainer("Books");
     Console.WriteLine("DEBUG: Books container reference ready.");
     return new CosmosBookRepository(container);
+});
+
+// Register Quotes container & repository
+builder.Services.AddSingleton<IQuoteRepository>(sp =>
+{
+    var db = sp.GetRequiredService<Database>();
+    var container = db.GetContainer("Quotes");
+    Console.WriteLine("DEBUG: Quotes container reference ready.");
+    return new CosmosQuoteRepository(container);
 });
 
 // JWT configuration

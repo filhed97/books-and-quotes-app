@@ -1,0 +1,41 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>My Quotes</h2>
+  <span [attr.title]="!canAddQuote() ? 'Maximum of 5 quotes reached' : null">
+    <button class="btn btn-success" (click)="goToAdd()" [disabled]="!canAddQuote()">
+      <i class="fa-solid fa-plus"></i> Add New Quote
+    </button>
+  </span>
+</div>
+
+<div *ngIf="loading" class="alert alert-info">Loading quotes...</div>
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<div class="table-responsive" *ngIf="!loading && quotes.length">
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>Quote</th>
+        <th>Author</th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let quote of quotes" class="align-middle">
+        <td>{{ quote.quote }}</td>
+        <td>{{ quote.author }}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-primary me-2" (click)="goToEdit(quote)">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="deleteQuote(quote.id)">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngIf="!loading && !quotes.length" class="alert alert-warning">
+  No quotes found. Click "Add New Quote" to create one.
+</div>
