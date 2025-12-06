@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { NgZone, Component } from '@angular/core';
 import { Auth } from '../../services/auth';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { isSanitizedNonEmpty } from '../../validators/input-sanitizer';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -16,7 +17,7 @@ export class Register {
   password = '';
   error = '';
 
-  constructor(private auth: Auth, private router: Router) {}
+  constructor(private auth: Auth, public router: Router, private zone: NgZone) {}
 
   submit() {
     // Sanitize username (required)
@@ -40,7 +41,9 @@ export class Register {
       },
       error: (err) => {
         console.error('Registration failed', err);
-        this.error = 'Registration failed.';
+        this.zone.run(() => {
+          this.error = 'Invalid username or password.';
+        });
       },
     });
   }

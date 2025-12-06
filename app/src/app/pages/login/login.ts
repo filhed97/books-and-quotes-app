@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { NgZone, Component } from '@angular/core';
 import { Auth } from '../../services/auth';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { isSanitizedNonEmpty } from '../../validators/input-sanitizer';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -16,7 +17,7 @@ export class Login {
   password = '';
   error = '';
 
-  constructor(private auth: Auth, private router: Router) {}
+  constructor(private auth: Auth, public router: Router, private zone: NgZone) {}
 
   submit() {
     // Sanitize username (required)
@@ -42,7 +43,9 @@ export class Login {
       },
       error: (err) => {
         console.error('Login failed', err);
-        this.error = 'Invalid username or password.';
+        this.zone.run(() => {
+          this.error = 'Invalid username or password.';
+        });
       },
     });
   }
