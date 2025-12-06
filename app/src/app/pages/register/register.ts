@@ -17,7 +17,7 @@ export class Register {
   password = '';
   error = '';
 
-  constructor(private auth: Auth, private router: Router, private zone: NgZone) {}
+  constructor(private auth: Auth, public router: Router, private zone: NgZone) {}
 
   submit() {
     // Sanitize username (required)
