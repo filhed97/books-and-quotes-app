@@ -43,13 +43,8 @@ public static class InputSanitizer
         return !string.IsNullOrWhiteSpace(SanitizeText(input, maxLen));
     }
 
-    // Sanitizes a numeric date field, allowing only digits
-    public static string SanitizeDate(string? input)
+    public static string TrimInput(string? input)
     {
-        if (string.IsNullOrWhiteSpace(input))
-            return string.Empty;
-
-        var digitsOnly = Regex.Replace(input, @"[^0-9]", "").Trim();
-        return digitsOnly;
+        return input?.Trim() ?? string.Empty;
     }
 }

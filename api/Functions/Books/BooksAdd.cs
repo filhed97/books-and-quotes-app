@@ -1,5 +1,6 @@
 using api.Authentication;
 using api.Models;
+using api.Sanitization;
 using api.Storage;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -36,6 +37,24 @@ public class BooksAdd
         {
             var bad = req.CreateResponse(HttpStatusCode.BadRequest);
             await bad.WriteStringAsync("Invalid JSON.");
+            return bad;
+        }
+
+        // Sanitize fields
+        book.title = InputSanitizer.SanitizeText(book.title);
+        book.author = InputSanitizer.SanitizeText(book.author);
+
+        if (string.IsNullOrWhiteSpace(book.title))
+        {
+            var bad = req.CreateResponse(HttpStatusCode.BadRequest);
+            await bad.WriteStringAsync("Book title is required and must be valid.");
+            return bad;
+        }
+
+        if (string.IsNullOrWhiteSpace(book.author))
+        {
+            var bad = req.CreateResponse(HttpStatusCode.BadRequest);
+            await bad.WriteStringAsync("Book author is required and must be valid.");
             return bad;
         }
 

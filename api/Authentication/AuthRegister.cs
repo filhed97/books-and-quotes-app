@@ -3,6 +3,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 using System.Text.Json;
 using System.Net;
 using api.Storage;
+using api.Sanitization;
 
 namespace api.Authentication;
 
@@ -23,10 +24,28 @@ public class AuthRegister
 
         var body = await JsonSerializer.DeserializeAsync<RegisterRequest>(req.Body, options);
 
-        if (body is null || string.IsNullOrWhiteSpace(body.Username))
+        if (body is null)
         {
             var bad = req.CreateResponse(HttpStatusCode.BadRequest);
-            await bad.WriteStringAsync("Missing or invalid username");
+            await bad.WriteStringAsync("Failed to parse valid request body.");
+            return bad;
+        }
+
+        // Sanitize fields
+        var sanitizedName = InputSanitizer.SanitizeText(body.Username);
+        var sanitizedPassword = InputSanitizer.SanitizeText(body.Password);
+
+        if (string.IsNullOrWhiteSpace(sanitizedName))
+        {
+            var bad = req.CreateResponse(HttpStatusCode.BadRequest);
+            await bad.WriteStringAsync("Missing or invalid username.");
+            return bad;
+        }
+
+        if (string.IsNullOrWhiteSpace(sanitizedPassword))
+        {
+            var bad = req.CreateResponse(HttpStatusCode.BadRequest);
+            await bad.WriteStringAsync("Missing or invalid password.");
             return bad;
         }
 
