@@ -1,6 +1,7 @@
 using api.Authentication;
 using api.Models;
 using api.Storage;
+using api.Sanitization;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
@@ -48,9 +49,40 @@ public class BooksUpdate
             return bad;
         }
 
-        // Apply updates (simplest form)
-        existing.title = body.title;
-        existing.author = body.author;
+        // Sanitize fields
+        // body.title = InputSanitizer.SanitizeText(body.title);
+        // body.author = InputSanitizer.SanitizeText(body.author);
+
+        // If user sent a non-empty title (i.e. actually wants to change it)
+        if (!string.IsNullOrWhiteSpace(body.title))
+        {
+            if (InputSanitizer.IsSanitizedNonEmpty(body.title))
+            {
+                existing.title = InputSanitizer.SanitizeText(body.title);
+            }
+            else
+            {
+                var bad = req.CreateResponse(HttpStatusCode.BadRequest);
+                await bad.WriteStringAsync("Suggested title input is invalid.");
+                return bad;
+            }
+        }
+
+        // If user sent a non-empty author
+        if (!string.IsNullOrWhiteSpace(body.author))
+        {
+            if (InputSanitizer.IsSanitizedNonEmpty(body.author))
+            {
+                existing.author = InputSanitizer.SanitizeText(body.author);
+            }
+            else
+            {
+                var bad = req.CreateResponse(HttpStatusCode.BadRequest);
+                await bad.WriteStringAsync("Suggested author input is invalid.");
+                return bad;
+            }
+        }
+
         existing.published = body.published;
 
         await _repo.UpdateAsync(existing);

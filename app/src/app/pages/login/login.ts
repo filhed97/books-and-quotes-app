@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Auth } from '../../services/auth';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { isSanitizedNonEmpty } from '../../validators/input-sanitizer';
 
 @Component({
   selector: 'app-login',
@@ -13,23 +14,36 @@ import { RouterModule, Router } from '@angular/router';
 export class Login {
   username = '';
   password = '';
+  error = '';
 
   constructor(private auth: Auth, private router: Router) {}
 
   submit() {
-    this.auth.login(this.username, this.password).subscribe({
+    // Sanitize username (required)
+    const sanitizedUsername = isSanitizedNonEmpty(this.username);
+    if (!sanitizedUsername) {
+      this.error = 'Username is required.';
+      return;
+    }
+
+    // Sanitize password (required)
+    const sanitizedPassword = isSanitizedNonEmpty(this.password);
+    if (!sanitizedPassword) {
+      this.error = 'Password is required.';
+      return;
+    }
+
+    this.auth.login(sanitizedUsername, sanitizedPassword).subscribe({
       next: (res) => {
         console.log('Login response:', res);
 
-        // Set login flag
         this.auth.setLoggedIn(true);
-
-        // Navigate to home page
         this.router.navigate(['/']);
       },
       error: (err) => {
         console.error('Login failed', err);
-      }
+        this.error = 'Invalid username or password.';
+      },
     });
   }
 }

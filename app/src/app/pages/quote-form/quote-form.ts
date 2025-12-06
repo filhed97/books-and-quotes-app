@@ -2,7 +2,13 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
-import { QuotesService, Quote, QuoteCreateRequest, QuoteUpdateRequest } from '../../services/quotes';
+import {
+  QuotesService,
+  Quote,
+  QuoteCreateRequest,
+  QuoteUpdateRequest,
+} from '../../services/quotes';
+import { sanitizeText, isSanitizedNonEmpty } from '../../validators/input-sanitizer';
 
 @Component({
   standalone: true,
@@ -41,26 +47,30 @@ export class QuoteFormPage implements OnInit {
   }
 
   submit() {
-    if (!this.quoteData.quote || this.quoteData.quote.trim() === '') {
+    // Validate + sanitize quote text in one step
+    const sanitizedQuote = isSanitizedNonEmpty(this.quoteData.quote);
+    if (!sanitizedQuote) {
       this.error = 'Quote text is required.';
       return;
     }
 
+    // Sanitize author (optional field)
+    const sanitizedAuthor = sanitizeText(this.quoteData.author ?? '');
+
     if (this.isEdit && this.quoteData.id) {
       const updateRequest: QuoteUpdateRequest = {
-        quote: this.quoteData.quote,
-        author: this.quoteData.author,
+        quote: sanitizedQuote,
+        author: sanitizedAuthor,
       };
 
       this.quotesService.updateQuote(this.quoteData.id, updateRequest).subscribe({
         next: () => this.router.navigate(['/quotes']),
         error: () => (this.error = 'Failed to update quote.'),
       });
-
     } else {
       const createRequest: QuoteCreateRequest = {
-        quote: this.quoteData.quote!,
-        author: this.quoteData.author,
+        quote: sanitizedQuote,
+        author: sanitizedAuthor,
       };
 
       this.quotesService.addQuote(createRequest).subscribe({

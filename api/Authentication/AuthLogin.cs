@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Net;
 using api.Storage;
+using api.Sanitization;
 
 namespace api.Authentication;
 
@@ -33,7 +34,8 @@ public class AuthLogin
             return bad;
         }
 
-        var user = await _users.GetUserAsync(body.Username);
+        var trimmedUsername = InputSanitizer.TrimInput(body.Username);
+        var user = await _users.GetUserAsync(trimmedUsername);
 
         if (user is null)
         {
@@ -43,7 +45,8 @@ public class AuthLogin
         }
 
         // For now: compare plain text
-        bool passwordMatches = user.Value.PasswordHash == body.Password;
+        var trimmedPassword = InputSanitizer.TrimInput(body.Password);
+        bool passwordMatches = user.Value.PasswordHash == trimmedPassword;
 
         if (!passwordMatches)
         {
