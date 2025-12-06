@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { BooksService, Book, BookCreateRequest, BookUpdateRequest } from '../../services/books';
+import { sanitizeText, isSanitizedNonEmpty } from '../../validators/input-sanitizer';
 
 @Component({
   standalone: true,
@@ -41,16 +42,20 @@ export class BookFormPage implements OnInit {
   }
 
   submit() {
-    if (!this.book.title || this.book.title.trim() === '') {
+    // Validate + sanitize title in one step
+    const sanitizedTitle = isSanitizedNonEmpty(this.book.title);
+    if (!sanitizedTitle) {
       this.error = 'Title is required.';
       return;
     }
 
+    // Sanitize author
+    const sanitizedAuthor = sanitizeText(this.book.author ?? '');
+
     if (this.isEdit && this.book.id) {
-      // Convert Partial<Book> → BookUpdateRequest
       const updateRequest: BookUpdateRequest = {
-        title: this.book.title,
-        author: this.book.author,
+        title: sanitizedTitle,
+        author: sanitizedAuthor,
         published: this.book.published,
       };
 
@@ -58,12 +63,10 @@ export class BookFormPage implements OnInit {
         next: () => this.router.navigate(['/books']),
         error: () => (this.error = 'Failed to update book.'),
       });
-
     } else {
-      // Convert Partial<Book> → BookCreateRequest
       const createRequest: BookCreateRequest = {
-        title: this.book.title!,
-        author: this.book.author,
+        title: sanitizedTitle,
+        author: sanitizedAuthor,
         published: this.book.published,
       };
 
