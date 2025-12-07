@@ -42,7 +42,6 @@ public class BooksDelete
         await _repo.DeleteAsync(id, user);
 
         var res = req.CreateResponse(HttpStatusCode.OK);
-        await res.WriteStringAsync("Deleted");
         return res;
     }
 }
