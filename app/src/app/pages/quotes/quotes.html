@@ -1,10 +1,16 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h2>My Quotes</h2>
-  <span [attr.title]="!canAddQuote() ? 'Maximum of 5 quotes reached' : null">
+  <h2>Filip's Favorite Quotes</h2>
+
+  <span *ngIf="isLoggedIn" [attr.title]="!canAddQuote() ? 'Maximum of 5 quotes reached' : null">
     <button class="btn btn-success" (click)="goToAdd()" [disabled]="!canAddQuote()">
       <i class="fa-solid fa-plus"></i> Add New Quote
     </button>
   </span>
+</div>
+
+<!-- Info for non-auth users -->
+<div *ngIf="!isLoggedIn" class="alert alert-info">
+  Log in to add, edit, or delete quotes.
 </div>
 
 <div *ngIf="loading" class="alert alert-info">Loading quotes...</div>
@@ -16,14 +22,14 @@
       <tr>
         <th>Quote</th>
         <th>Author</th>
-        <th class="text-end">Actions</th>
+        <th class="text-end" *ngIf="isLoggedIn">Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let quote of quotes" class="align-middle">
         <td>{{ quote.quote }}</td>
         <td>{{ quote.author }}</td>
-        <td class="text-end">
+        <td class="text-end" *ngIf="isLoggedIn">
           <button class="btn btn-sm btn-primary me-2" (click)="goToEdit(quote)">
             <i class="fa-solid fa-pen"></i>
           </button>
@@ -37,5 +43,5 @@
 </div>
 
 <div *ngIf="!loading && !quotes.length" class="alert alert-warning">
-  No quotes found. Click "Add New Quote" to create one.
+  No quotes found. <span *ngIf="isLoggedIn">Click "Add New Quote" to create one.</span>
 </div>

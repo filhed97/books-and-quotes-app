@@ -1,9 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { BooksService, Book, BookCreateRequest, BookUpdateRequest } from '../../services/books';
 import { sanitizeText, isSanitizedNonEmpty } from '../../validators/input-sanitizer';
+import { Auth } from '../../services/auth';
 
 @Component({
   standalone: true,
@@ -16,6 +17,8 @@ export class BookFormPage implements OnInit {
   private booksService = inject(BooksService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private auth = inject(Auth);
+  private zone = inject(NgZone);
 
   book: Partial<Book> = {};
   loading = true;
@@ -23,6 +26,15 @@ export class BookFormPage implements OnInit {
   isEdit = false;
 
   ngOnInit() {
+    // Reactive redirect on logout
+    this.auth.loggedIn$.subscribe((loggedIn) => {
+      this.zone.run(() => {
+        if (!loggedIn) {
+          this.router.navigate(['/books']);
+        }
+      });
+    });
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit = true;
@@ -42,14 +54,12 @@ export class BookFormPage implements OnInit {
   }
 
   submit() {
-    // Validate + sanitize title in one step
     const sanitizedTitle = isSanitizedNonEmpty(this.book.title);
     if (!sanitizedTitle) {
       this.error = 'Title is required.';
       return;
     }
 
-    // Sanitize author
     const sanitizedAuthor = sanitizeText(this.book.author ?? '');
 
     if (this.isEdit && this.book.id) {

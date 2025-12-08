@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { Auth } from '../../services/auth';
@@ -16,15 +16,25 @@ export class Navbar implements OnInit {
 
   private auth = inject(Auth);
   private router = inject(Router);
-  public themeService = inject(ThemeService); // Make public for template access
+  public themeService = inject(ThemeService);
+  private zone = inject(NgZone);
 
   isLoggedIn = false;
 
   async ngOnInit() {
-    // Subscribe to reactive login state
     this.auth.loggedIn$.subscribe(state => {
-      this.isLoggedIn = state;
+      this.zone.run(() => {
+        this.isLoggedIn = state;
+      });
     });
+  }
+
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
   }
 
   async logout() {
@@ -35,7 +45,6 @@ export class Navbar implements OnInit {
     }
 
     this.auth.setLoggedIn(false);
-    this.router.navigate(['/login']);
   }
 
   toggleTheme() {

@@ -1,8 +1,14 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h2>Books</h2>
-  <button class="btn btn-success" (click)="goToAdd()">
+
+  <button *ngIf="isLoggedIn" class="btn btn-success" (click)="goToAdd()">
     <i class="fa-solid fa-plus"></i> Add New Book
   </button>
+</div>
+
+<!-- Info for non-auth users -->
+<div *ngIf="!isLoggedIn" class="alert alert-info">
+  Log in to view, add, edit, or delete books.
 </div>
 
 <div *ngIf="loading" class="alert alert-info">Loading books...</div>
@@ -15,7 +21,7 @@
         <th>Title</th>
         <th>Author</th>
         <th>Published</th>
-        <th class="text-end">Actions</th>
+        <th class="text-end" *ngIf="isLoggedIn">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -23,7 +29,7 @@
         <td>{{ book.title }}</td>
         <td>{{ book.author }}</td>
         <td>{{ book.published | date:'yyyy-MM-dd' }}</td>
-        <td class="text-end">
+        <td class="text-end" *ngIf="isLoggedIn">
           <button class="btn btn-sm btn-primary me-2" (click)="goToEdit(book)">
             <i class="fa-solid fa-pen"></i>
           </button>
@@ -36,6 +42,6 @@
   </table>
 </div>
 
-<div *ngIf="!loading && !books.length" class="alert alert-warning">
+<div *ngIf="!loading && isLoggedIn && !books.length" class="alert alert-warning">
   No books found. Click "Add New Book" to create one.
 </div>

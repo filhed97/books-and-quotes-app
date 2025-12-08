@@ -25,7 +25,7 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" routerLink="/quotes" routerLinkActive="active">
-          <i class="fa-solid fa-quote-right"></i> My Quotes
+          <i class="fa-solid fa-quote-right"></i> Quotes
         </a>
       </li>
     </ul>
@@ -44,19 +44,19 @@
         </button>
       </li>
 
-      <!-- Auth buttons -->
-      <!-- <li *ngIf="!isLoggedIn" class="nav-item">
-        <a class="nav-link" routerLink="/login">
+      <!-- Login/Register buttons for non-authenticated users -->
+      <li *ngIf="!isLoggedIn" class="nav-item">
+        <button class="btn btn-outline-light me-2" (click)="goToLogin()">
           <i class="fa-solid fa-right-to-bracket"></i> Login
-        </a>
+        </button>
+      </li>
+      <li *ngIf="!isLoggedIn" class="nav-item">
+        <button class="btn btn-outline-light" (click)="goToRegister()">
+          <i class="fa-solid fa-user-plus"></i> Register
+        </button>
       </li>
 
-      <li *ngIf="!isLoggedIn" class="nav-item">
-        <a class="nav-link" routerLink="/register">
-          <i class="fa-solid fa-user-plus"></i> Register
-        </a>
-      </li> -->
-
+      <!-- Logout button for authenticated users -->
       <li *ngIf="isLoggedIn" class="nav-item">
         <button class="btn btn-outline-light" (click)="logout()">
           <i class="fa-solid fa-right-from-bracket"></i> Logout

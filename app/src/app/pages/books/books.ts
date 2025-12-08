@@ -1,7 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BooksService, Book } from '../../services/books';
 import { RouterModule, Router } from '@angular/router';
+import { Auth } from '../../services/auth';
 
 @Component({
   standalone: true,
@@ -14,13 +15,27 @@ export class BooksPage implements OnInit {
 
   private booksService = inject(BooksService);
   private router = inject(Router);
+  private auth = inject(Auth);
+  private zone = inject(NgZone);
 
   books: Book[] = [];
   loading = true;
   error = '';
+  isLoggedIn = false;
 
   ngOnInit() {
-    this.loadBooks();
+    this.auth.loggedIn$.subscribe((state) => {
+      this.zone.run(() => {
+        this.isLoggedIn = state;
+
+        if (this.isLoggedIn) {
+          this.loadBooks();
+        } else {
+          this.books = [];
+          this.loading = false;
+        }
+      });
+    });
   }
 
   loadBooks() {
