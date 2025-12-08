@@ -13,11 +13,14 @@ public class CosmosQuoteRepository : IQuoteRepository
         _container = container;
     }
 
-    public async Task<Quote?> GetAsync(string id, string owner)
+    public async Task<Quote?> GetAsync(string id)
     {
         try
         {
-            var resp = await _container.ReadItemAsync<Quote>(id, new PartitionKey(owner));
+            var resp = await _container.ReadItemAsync<Quote>(
+                id,
+                new PartitionKey("quotes")
+            );
             return resp.Resource;
         }
         catch
@@ -26,28 +29,28 @@ public class CosmosQuoteRepository : IQuoteRepository
         }
     }
 
-    public async Task<List<Quote>> ListAsync(string owner)
+    public async Task<List<Quote>> ListAsync()
     {
-        var q = _container.GetItemLinqQueryable<Quote>(true)
-                          .Where(qt => qt.userId == owner)
-                          .ToFeedIterator();
+        var query = _container.GetItemLinqQueryable<Quote>(true)
+                              .Where(q => q.partitionKey == "quotes")
+                              .ToFeedIterator();
 
         var results = new List<Quote>();
 
-        while (q.HasMoreResults)
+        while (query.HasMoreResults)
         {
-            results.AddRange(await q.ReadNextAsync());
+            results.AddRange(await query.ReadNextAsync());
         }
 
         return results;
     }
 
     public Task AddAsync(Quote quote) =>
-        _container.CreateItemAsync(quote, new PartitionKey(quote.userId));
+        _container.CreateItemAsync(quote, new PartitionKey("quotes"));
 
     public Task UpdateAsync(Quote quote) =>
-        _container.UpsertItemAsync(quote, new PartitionKey(quote.userId));
+        _container.UpsertItemAsync(quote, new PartitionKey("quotes"));
 
-    public Task DeleteAsync(string id, string owner) =>
-        _container.DeleteItemAsync<Quote>(id, new PartitionKey(owner));
+    public Task DeleteAsync(string id) =>
+        _container.DeleteItemAsync<Quote>(id, new PartitionKey("quotes"));
 }

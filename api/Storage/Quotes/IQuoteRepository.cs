@@ -4,9 +4,9 @@ namespace api.Storage;
 
 public interface IQuoteRepository
 {
-    Task<Quote?> GetAsync(string id, string owner);
-    Task<List<Quote>> ListAsync(string owner);
+    Task<Quote?> GetAsync(string id);
+    Task<List<Quote>> ListAsync();
     Task AddAsync(Quote quote);
     Task UpdateAsync(Quote quote);
-    Task DeleteAsync(string id, string owner);
+    Task DeleteAsync(string id);
 }
