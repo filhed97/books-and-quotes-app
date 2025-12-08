@@ -23,6 +23,7 @@ public class QuotesDelete
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "quotes/{id}")] HttpRequestData req,
         string id)
     {
+        // Require logged-in user
         var user = JwtReader.GetUser(req, _config, out var error);
         if (user == null)
         {
@@ -31,7 +32,8 @@ public class QuotesDelete
             return unauth;
         }
 
-        var existing = await _repo.GetAsync(id, user);
+        // Find quote by id (no owner)
+        var existing = await _repo.GetAsync(id);
         if (existing == null)
         {
             var notFound = req.CreateResponse(HttpStatusCode.NotFound);
@@ -39,9 +41,9 @@ public class QuotesDelete
             return notFound;
         }
 
-        await _repo.DeleteAsync(id, user);
+        // Delete
+        await _repo.DeleteAsync(id);
 
-        var res = req.CreateResponse(HttpStatusCode.OK);
-        return res;
+        return req.CreateResponse(HttpStatusCode.OK);
     }
 }

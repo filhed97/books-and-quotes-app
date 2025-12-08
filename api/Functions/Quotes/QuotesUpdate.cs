@@ -25,6 +25,7 @@ public class QuotesUpdate
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "quotes/{id}")] HttpRequestData req,
         string id)
     {
+        // Require authenticated user
         var user = JwtReader.GetUser(req, _config, out var error);
         if (user == null)
         {
@@ -33,7 +34,8 @@ public class QuotesUpdate
             return unauth;
         }
 
-        var existing = await _repo.GetAsync(id, user);
+        // Load quote by global ID (no user filter)
+        var existing = await _repo.GetAsync(id);
         if (existing == null)
         {
             var notFound = req.CreateResponse(HttpStatusCode.NotFound);
@@ -41,6 +43,7 @@ public class QuotesUpdate
             return notFound;
         }
 
+        // Parse update body
         var body = await req.ReadFromJsonAsync<Quote>();
         if (body == null)
         {
@@ -49,38 +52,33 @@ public class QuotesUpdate
             return bad;
         }
 
-        // Sanitize fields
-
-        // If user sent a non-empty quote (i.e. actually wants to change it)
+        // Update quote text if provided
         if (!string.IsNullOrWhiteSpace(body.quote))
         {
-            if (InputSanitizer.IsSanitizedNonEmpty(body.quote))
-            {
-                existing.quote = InputSanitizer.SanitizeText(body.quote);
-            }
-            else
+            if (!InputSanitizer.IsSanitizedNonEmpty(body.quote))
             {
                 var bad = req.CreateResponse(HttpStatusCode.BadRequest);
-                await bad.WriteStringAsync("Suggested quote input is invalid.");
+                await bad.WriteStringAsync("Invalid quote text.");
                 return bad;
             }
+
+            existing.quote = InputSanitizer.SanitizeText(body.quote);
         }
 
-        // If user sent a non-empty author
+        // Update author if provided
         if (!string.IsNullOrWhiteSpace(body.author))
         {
-            if (InputSanitizer.IsSanitizedNonEmpty(body.author))
-            {
-                existing.author = InputSanitizer.SanitizeText(body.author);
-            }
-            else
+            if (!InputSanitizer.IsSanitizedNonEmpty(body.author))
             {
                 var bad = req.CreateResponse(HttpStatusCode.BadRequest);
-                await bad.WriteStringAsync("Suggested author input is invalid.");
+                await bad.WriteStringAsync("Invalid author.");
                 return bad;
             }
+
+            existing.author = InputSanitizer.SanitizeText(body.author);
         }
 
+        // Persist update
         await _repo.UpdateAsync(existing);
 
         var res = req.CreateResponse(HttpStatusCode.OK);

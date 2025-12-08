@@ -1,7 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { QuotesService, Quote } from '../../services/quotes';
 import { RouterModule, Router } from '@angular/router';
+import { Auth } from '../../services/auth';
 
 @Component({
   standalone: true,
@@ -13,13 +14,22 @@ import { RouterModule, Router } from '@angular/router';
 export class QuotesPage implements OnInit {
   private quotesService = inject(QuotesService);
   private router = inject(Router);
+  private auth = inject(Auth);
+  private zone = inject(NgZone);
 
   quotes: Quote[] = [];
   loading = true;
   error = '';
   maxQuotes = 5;
+  isLoggedIn = false;
 
   ngOnInit() {
+    this.auth.loggedIn$.subscribe((state) => {
+      this.zone.run(() => {
+        this.isLoggedIn = state;
+      });
+    });
+
     this.loadQuotes();
   }
 

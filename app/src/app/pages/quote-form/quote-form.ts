@@ -1,14 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
-import {
-  QuotesService,
-  Quote,
-  QuoteCreateRequest,
-  QuoteUpdateRequest,
-} from '../../services/quotes';
+import { QuotesService, Quote, QuoteCreateRequest, QuoteUpdateRequest } from '../../services/quotes';
 import { sanitizeText, isSanitizedNonEmpty } from '../../validators/input-sanitizer';
+import { Auth } from '../../services/auth';
 
 @Component({
   standalone: true,
@@ -21,6 +17,8 @@ export class QuoteFormPage implements OnInit {
   private quotesService = inject(QuotesService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private auth = inject(Auth);
+  private zone = inject(NgZone);
 
   quoteData: Partial<Quote> = {};
   loading = true;
@@ -28,6 +26,15 @@ export class QuoteFormPage implements OnInit {
   isEdit = false;
 
   ngOnInit() {
+    // Reactive redirect on logout
+    this.auth.loggedIn$.subscribe((loggedIn) => {
+      this.zone.run(() => {
+        if (!loggedIn) {
+          this.router.navigate(['/quotes']);
+        }
+      });
+    });
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit = true;
@@ -47,14 +54,12 @@ export class QuoteFormPage implements OnInit {
   }
 
   submit() {
-    // Validate + sanitize quote text in one step
     const sanitizedQuote = isSanitizedNonEmpty(this.quoteData.quote);
     if (!sanitizedQuote) {
       this.error = 'Quote text is required.';
       return;
     }
 
-    // Sanitize author (optional field)
     const sanitizedAuthor = sanitizeText(this.quoteData.author ?? '');
 
     if (this.isEdit && this.quoteData.id) {

@@ -24,6 +24,7 @@ public class QuotesAdd
     public async Task<HttpResponseData> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "quotes")] HttpRequestData req)
     {
+        // Require authentication
         var user = JwtReader.GetUser(req, _config, out var error);
         if (user == null)
         {
@@ -32,15 +33,16 @@ public class QuotesAdd
             return unauth;
         }
 
-        // Ensure user can't have more than 5 quotes
-        var quotes = await _repo.ListAsync(user);
+        // Limit total quotes to 5
+        var quotes = await _repo.ListAsync(); // new overload: no user
         if (quotes.Count >= 5)
         {
-            var bres = req.CreateResponse(HttpStatusCode.BadRequest);
-            await bres.WriteStringAsync("Maximum of 5 quotes reached.");
-            return bres;
+            var bad = req.CreateResponse(HttpStatusCode.BadRequest);
+            await bad.WriteStringAsync("Maximum of 5 quotes reached.");
+            return bad;
         }
 
+        // Read input
         var quote = await req.ReadFromJsonAsync<Quote>();
         if (quote == null)
         {
@@ -49,26 +51,28 @@ public class QuotesAdd
             return bad;
         }
 
-        // Sanitize fields
-        quote.quote = InputSanitizer.SanitizeText(quote.quote);
+        // Sanitize
+        quote.quote  = InputSanitizer.SanitizeText(quote.quote);
         quote.author = InputSanitizer.SanitizeText(quote.author);
 
+        // Validate
         if (string.IsNullOrWhiteSpace(quote.quote))
         {
             var bad = req.CreateResponse(HttpStatusCode.BadRequest);
-            await bad.WriteStringAsync("Book title is required and must be valid.");
+            await bad.WriteStringAsync("Quote text is required and must be valid.");
             return bad;
         }
 
         if (string.IsNullOrWhiteSpace(quote.author))
         {
             var bad = req.CreateResponse(HttpStatusCode.BadRequest);
-            await bad.WriteStringAsync("Book author is required and must be valid.");
+            await bad.WriteStringAsync("Author is required and must be valid.");
             return bad;
         }
 
-        quote.userId = user;
+        // Ensure id and partitionKey are correctly set
         quote.id ??= Guid.NewGuid().ToString();
+        quote.partitionKey = "quotes";
 
         await _repo.AddAsync(quote);
 
