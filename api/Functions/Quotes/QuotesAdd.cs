@@ -33,15 +33,6 @@ public class QuotesAdd
             return unauth;
         }
 
-        // Limit total quotes to 5
-        var quotes = await _repo.ListAsync(); // new overload: no user
-        if (quotes.Count >= 5)
-        {
-            var bad = req.CreateResponse(HttpStatusCode.BadRequest);
-            await bad.WriteStringAsync("Maximum of 5 quotes reached.");
-            return bad;
-        }
-
         // Read input
         var quote = await req.ReadFromJsonAsync<Quote>();
         if (quote == null)
